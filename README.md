@@ -1,5 +1,8 @@
 # Ride-sharing-app
+
 Mini project for the database course COMP 232 for 4th semester!
+Checkout at: https://eyatra.streamlit.app/
+
 ```
 git clone https://github.com/maheshpanta333/Ride-sharing-app.git
 pip install -r requirements.txt
