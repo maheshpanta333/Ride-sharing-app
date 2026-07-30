@@ -3,9 +3,10 @@ import psycopg2
 import pandas as pd
 from datetime import datetime
 import random
+from streamlit_option_menu import option_menu
 
 # Page Configuration
-st.set_page_config(page_title="eYatra Ride-Sharing Portal", page_icon="🛺", layout="wide")
+st.set_page_config(page_title="eYatra Ride-Sharing Portal", page_icon="", layout="wide")
 
 # --- GLOBAL STYLING ---
 st.markdown("""
@@ -41,7 +42,7 @@ st.markdown("""
 
 st.markdown("""
 <div class="hero-banner">
-    <h1>🛺 eYatra DBMS Portal</h1>
+    <h1> eYatra DBMS Portal</h1>
     <p>Welcome to the eYatra Ride-Sharing Mini-Project Interface.</p>
 </div>
 """, unsafe_allow_html=True)
@@ -60,7 +61,7 @@ def get_connection():
         )
         return conn
     except Exception as e:
-        st.error(f"❌ Failed to connect to Supabase: {e}")
+        st.error(f" Failed to connect to Supabase: {e}")
         st.info("Check your settings in `.streamlit/secrets.toml` and ensure you are using the correct connection pooler port.")
         return None
 
@@ -87,29 +88,83 @@ def run_query(query, params=None):
 
 # --- APP NAVIGATION ---
 st.sidebar.markdown(
-    '<div class="sidebar-title">🛺 eYatra</div>'
+    '<div class="sidebar-title"> eYatra</div>'
     '<div class="sidebar-sub">Ride-Sharing Control Panel</div>',
     unsafe_allow_html=True
 )
 st.sidebar.divider()
-role = st.sidebar.radio(
-    "Choose Your Role / View",
-    [
-        "Rider (Passenger)",
-        "Driver",
-        "⚠️ File a Complaint",  # <-- New Navigation Option
-        "Admin Portal",
-        "📊 Database Tables Explorer"
-    ]
-)
+with st.sidebar:
+    role = option_menu(
+        menu_title="eYatra",
+        options=[
+            "Rider",
+            "Driver",
+            "Complaint",
+            "Admin",
+            "Database"
+        ],
+        icons=[
+            "person",
+            "car-front",
+            "exclamation-circle",
+            "shield-lock",
+            "database"
+        ],
+        menu_icon="geo-alt",
+        default_index=0,
+        styles={
+            "container": {
+                "padding": "0!important",
+                "background-color": "#262730"
+            },
+            "icon": {
+                "color": "#2575fc",
+                "font-size": "18px"
+            },
+            "nav-link": {
+                "font-size": "16px",
+                "padding": "14px 18px",
+                "margin": "6px 0",
+                "border-radius": "12px",
+                "--hover-color": "#343437",
+            },
+            "nav-link-selected": {
+                "background-color": "#464b54",
+                "color": "white",
+            },
+        },
+    )
+
 st.sidebar.divider()
-st.sidebar.caption("✅ Connected to Supabase")
+st.sidebar.caption(" Connected to Supabase\n\n Created by:  \n Mahesh Panta  \n Himesh Bhandari  \n Sworup Jangam  \n Pratik Karna")
+
+if "show_dialog" not in st.session_state:
+    st.session_state.show_dialog = False
+
+if "show_payment_dialog" not in st.session_state:
+    st.session_state.show_payment_dialog = False
+
+if "show_complaint_dialog" not in st.session_state:
+    st.session_state.show_complaint_dialog = False
+
+if "show_resolved_dialog" not in st.session_state:
+    st.session_state.show_resolved_dialog = False
 
 # -------------------------------------------------------------
 # ROLE 1: RIDER (PASSENGER)
 # -------------------------------------------------------------
-if role == "Rider (Passenger)":
-    st.header("🚶 Rider Console")
+
+@st.dialog("Ride Assigned")
+def ride_assigned():
+    st.success("Your ride has been assigned!")
+    st.write("Checkout the Database section for details.")
+
+    if st.button("OK"):
+        st.session_state.show_dialog = False
+        st.rerun()
+
+if role == "Rider":
+    st.header(" Rider Console")
 
     # Fetch existing riders for dropdown selection
     users_df = run_query("SELECT id, name FROM users;")
@@ -120,7 +175,7 @@ if role == "Rider (Passenger)":
             selected_user_name = st.selectbox("Select User Profile", list(user_options.keys()))
             user_id = user_options[selected_user_name]
 
-        st.subheader("📍 Book a Ride")
+        st.subheader(" Book a Ride")
         with st.container(border=True):
             col1, col2 = st.columns(2, gap="large")
             with col1:
@@ -158,9 +213,9 @@ if role == "Rider (Passenger)":
                     run_query("UPDATE driver SET driver_status = 'driving' WHERE id = %s;", (driver_id,))
 
                     if new_trip is not None:
-                        new_id = new_trip.iloc[0]['trip_id']
-                        st.success(f"🎉 Ride Booked Successfully! Trip ID: {new_id}")
-                        st.info(f"Driver **{driver_name}** is on the way in a **{vehicle_choice}**!")
+                        st.session_state.show_dialog = True
+                    if st.session_state.show_dialog:
+                        ride_assigned()
                 else:
                     st.error(f"No available {vehicle_choice} drivers right now. Please try again later!")
     else:
@@ -169,8 +224,9 @@ if role == "Rider (Passenger)":
 # -------------------------------------------------------------
 # ROLE 2: DRIVER
 # -------------------------------------------------------------
+
 elif role == "Driver":
-    st.header("🚗 Driver Console")
+    st.header(" Driver Console")
 
     # Fetch drivers
     drivers_df = run_query("SELECT id, name FROM driver;")
@@ -181,7 +237,7 @@ elif role == "Driver":
         driver_id = driver_options[selected_driver_name]
 
         # Section 1: Update Active Status
-        st.subheader("🔄 Change Availability Status")
+        st.subheader(" Change Availability Status")
         current_status_df = run_query("SELECT driver_status FROM driver WHERE id = %s;", (driver_id,))
         if current_status_df is not None and not current_status_df.empty:
             with st.container(border=True):
@@ -195,12 +251,19 @@ elif role == "Driver":
                     st.rerun()
 
         # Section 2: View and Complete Trips
-        st.subheader("🗺️ Your Ongoing Trips")
+        st.subheader("️ Your Ongoing Trips")
         ongoing_trips = run_query(
             "SELECT trip_id, user_id, pickup_address, drop_off, price FROM trip WHERE driver_id = %s AND status = 'ongoing';",
             (driver_id,)
         )
+        @st.dialog("Payment Successful")
+        def payment_completed_dialog():
+            st.success("Trip completed successfully!")
+            st.write("The payment has been processed and recorded in the database.")
 
+            if st.button("OK", key="payment_ok"):
+                st.session_state.show_payment_dialog = False
+                st.rerun()
         if ongoing_trips is not None and not ongoing_trips.empty:
             for _, row in ongoing_trips.iterrows():
                 with st.container(border=True):
@@ -227,18 +290,21 @@ elif role == "Driver":
                         # Set driver status back to 'ready'
                         run_query("UPDATE driver SET driver_status = 'ready' WHERE id = %s;", (driver_id,))
 
-                        st.success(f"Trip #{row['trip_id']} Completed! Payment of Rs. {row['price']} logged via {pay_method.capitalize()}.")
+                        st.session_state.show_payment_dialog = True
                         st.rerun()
         else:
             st.info("No ongoing trips assigned to you at the moment.")
     else:
         st.warning("No drivers registered in the system.")
 
+if st.session_state.get("show_payment_dialog", False):
+    payment_completed_dialog()
+
 # -------------------------------------------------------------
-# ROLE 3: FILE A COMPLAINT (New Code Component 🌟)
+# ROLE 3: FILE A COMPLAINT (New Code Component )
 # -------------------------------------------------------------
-elif role == "⚠️ File a Complaint":
-    st.header("⚠️ Customer and Rider Dispute Portal")
+elif role == "Complaint":
+    st.header("️Customer and Rider Dispute Portal")
     st.markdown("Encountered an issue during your journey? Register your grievance here.")
     st.divider()
 
@@ -283,6 +349,18 @@ elif role == "⚠️ File a Complaint":
             query_params = (selected_entity_id,)
 
     # Step 3: Select Trip and Submit Complaint details
+
+    @st.dialog("Complaint Submitted")
+    def complaint_submitted_dialog():
+        st.success("Your complaint has been submitted.")
+        st.write(
+            "Our administrators will review your complaint and respond as soon as possible."
+        )
+
+        if st.button("OK", key="complaint_ok"):
+            st.session_state.show_complaint_dialog = False
+            st.rerun()
+
     if selected_entity_id is not None:
         user_trips = run_query(trips_query, query_params)
 
@@ -304,18 +382,21 @@ elif role == "⚠️ File a Complaint":
                             VALUES (%s, %s, %s);
                         """
                         run_query(insert_query, (complainant_role, trip_id, complaint_text))
-                        st.success("🎉 Your complaint has been recorded successfully. An administrator will look into it shortly!")
+                        st.session_state.show_complaint_dialog = True
         else:
             st.warning("You do not have any registered trips in the system to complain about yet.")
+
+if st.session_state.get("show_complaint_dialog", False):
+    complaint_submitted_dialog()
 
 # -------------------------------------------------------------
 # ROLE 4: ADMIN PORTAL
 # -------------------------------------------------------------
-elif role == "Admin Portal":
-    st.header("🛡️ Administrative Command Center")
+elif role == "Admin":
+    st.header("️ Administrative Command Center")
 
     # Simple Metrics Row
-    st.subheader("📊 Business Metrics")
+    st.subheader(" Business Metrics")
     col1, col2, col3 = st.columns(3, gap="medium")
 
     total_revenue_df = run_query("SELECT SUM(price) as rev FROM trip WHERE status = 'completed';")
@@ -335,12 +416,23 @@ elif role == "Admin Portal":
     st.divider()
 
     # Complaint Resolution Engine
-    st.subheader("📬 Resolve Pending Customer Complaints")
+    st.subheader(" Resolve Pending Customer Complaints")
     pending_complaints = run_query("""
         SELECT id, complaint_by, trip_id, complaint
         FROM complaints
         WHERE response IS NULL OR response = '';
     """)
+
+    @st.dialog("Complaint Resolved")
+    def complaint_resolved_dialog():
+        st.success("Response submitted successfully.")
+        st.write(
+            "The complaint has been marked as resolved and your response has been saved."
+        )
+
+        if st.button("OK", key="resolved_ok"):
+            st.session_state.show_resolved_dialog = False
+            st.rerun()
 
     if pending_complaints is not None and not pending_complaints.empty:
         with st.container(border=True):
@@ -364,35 +456,38 @@ elif role == "Admin Portal":
                         "UPDATE complaints SET response = %s, admin_assigned = %s WHERE id = %s;",
                         (resolution_text, admin_id, selected_complaint_id)
                     )
-                    st.success(f"Complaint #{selected_complaint_id} resolved and saved.")
+                    st.session_state.show_resolved_dialog = True
                     st.rerun()
             else:
                 st.error("No Admins found in the system. Create an Admin profile first.")
     else:
         st.success("All customer disputes have been fully resolved!")
 
+if st.session_state.get("show_resolved_dialog", False):
+    complaint_resolved_dialog()
+
 # -------------------------------------------------------------
 # ROLE 5: DATABASE TABLES EXPLORER
 # -------------------------------------------------------------
-elif role == "📊 Database Tables Explorer":
-    st.header("📊 Database Tables Explorer")
+elif role == "Database":
+    st.header(" Database Tables Explorer")
     st.markdown("Direct read access to your PostgreSQL tables hosted on Supabase.")
     st.divider()
 
     # Defining our 7 interactive tabs
     tab_users, tab_drivers, tab_vehicles, tab_trips, tab_payments, tab_complaints, tab_admins = st.tabs([
-        "👤 Users",
-        "🚗 Drivers",
-        "🚲 Vehicles",
-        "🗺️ Trips",
-        "💳 Payments",
-        "⚠️ Complaints",
-        "🛡️ Admins"
+        " Users",
+        " Drivers",
+        " Vehicles",
+        "️ Trips",
+        " Payments",
+        "️ Complaints",
+        "️ Admins"
     ])
 
     # --- TAB 1: USERS ---
     with tab_users:
-        st.subheader("👤 Registered Users Profile Directory")
+        st.subheader(" Registered Users Profile Directory")
         users_df = run_query("SELECT * FROM users;")
         if users_df is not None and not users_df.empty:
             st.metric("Total Users", len(users_df))
@@ -402,7 +497,7 @@ elif role == "📊 Database Tables Explorer":
 
     # --- TAB 2: DRIVERS ---
     with tab_drivers:
-        st.subheader("🚗 Driver Registry & Availability status")
+        st.subheader(" Driver Registry & Availability status")
         drivers_df = run_query("SELECT * FROM driver;")
         if drivers_df is not None and not drivers_df.empty:
             col1, col2 = st.columns(2, gap="medium")
@@ -417,7 +512,7 @@ elif role == "📊 Database Tables Explorer":
 
     # --- TAB 3: VEHICLES ---
     with tab_vehicles:
-        st.subheader("🚲 Active Vehicle Fleet")
+        st.subheader(" Active Vehicle Fleet")
         vehicles_df = run_query("SELECT * FROM vehicles;")
         if vehicles_df is not None and not vehicles_df.empty:
             col1, col2 = st.columns(2, gap="medium")
@@ -433,7 +528,7 @@ elif role == "📊 Database Tables Explorer":
 
     # --- TAB 4: TRIPS ---
     with tab_trips:
-        st.subheader("🗺️ Trip Transaction History")
+        st.subheader("️ Trip Transaction History")
         trip_df = run_query("SELECT * FROM trip;")
         if trip_df is not None and not trip_df.empty:
             col1, col2, col3 = st.columns(3, gap="medium")
@@ -451,7 +546,7 @@ elif role == "📊 Database Tables Explorer":
 
     # --- TAB 5: PAYMENTS ---
     with tab_payments:
-        st.subheader("💳 Digital Wallet Transactions")
+        st.subheader(" Digital Wallet Transactions")
         payments_df = run_query("SELECT * FROM payment;")
         if payments_df is not None and not payments_df.empty:
             col1, col2 = st.columns(2, gap="medium")
@@ -467,7 +562,7 @@ elif role == "📊 Database Tables Explorer":
 
     # --- TAB 6: COMPLAINTS ---
     with tab_complaints:
-        st.subheader("⚠️ Customer Grievance Log")
+        st.subheader("️ Customer Grievance Log")
         complaints_df = run_query("SELECT * FROM complaints;")
         if complaints_df is not None and not complaints_df.empty:
             col1, col2 = st.columns(2, gap="medium")
@@ -482,7 +577,7 @@ elif role == "📊 Database Tables Explorer":
 
     # --- TAB 7: ADMINS ---
     with tab_admins:
-        st.subheader("🛡️ Administrative Profiles")
+        st.subheader("️ Administrative Profiles")
         admin_df = run_query("SELECT * FROM admin;")
         if admin_df is not None and not admin_df.empty:
             st.metric("Total System Admins", len(admin_df))
