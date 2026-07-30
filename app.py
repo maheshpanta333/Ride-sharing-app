@@ -5,9 +5,9 @@ from datetime import datetime
 import random
 
 # Page Configuration
-st.set_page_config(page_title="eJatra Ride-Sharing Portal", layout="wide")
-st.title("🛺 eJatra DBMS Portal")
-st.markdown("Welcome to the eJatra Ride-Sharing Mini-Project Interface.")
+st.set_page_config(page_title="eYatra Ride-Sharing Portal", layout="wide")
+st.title("🛺 eYatra DBMS Portal")
+st.markdown("Welcome to the eYatra Ride-Sharing Mini-Project Interface.")
 
 # --- SECURE SUPABASE CONNECTION ---
 @st.cache_resource
