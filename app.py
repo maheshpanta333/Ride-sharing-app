@@ -5,7 +5,7 @@ from datetime import datetime
 import random
 
 # Page Configuration
-st.set_page_config(page_title="eJatra Ride-Sharing Portal", page_icon="🛺", layout="wide")
+st.set_page_config(page_title="eYatra Ride-Sharing Portal", page_icon="🛺", layout="wide")
 
 # --- GLOBAL STYLING ---
 st.markdown("""
@@ -41,8 +41,8 @@ st.markdown("""
 
 st.markdown("""
 <div class="hero-banner">
-    <h1>🛺 eJatra DBMS Portal</h1>
-    <p>Welcome to the eJatra Ride-Sharing Mini-Project Interface.</p>
+    <h1>🛺 eYatra DBMS Portal</h1>
+    <p>Welcome to the eYatra Ride-Sharing Mini-Project Interface.</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -87,7 +87,7 @@ def run_query(query, params=None):
 
 # --- APP NAVIGATION ---
 st.sidebar.markdown(
-    '<div class="sidebar-title">🛺 eJatra</div>'
+    '<div class="sidebar-title">🛺 eYatra</div>'
     '<div class="sidebar-sub">Ride-Sharing Control Panel</div>',
     unsafe_allow_html=True
 )
