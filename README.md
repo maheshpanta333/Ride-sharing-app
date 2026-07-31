@@ -2,6 +2,7 @@
 
 Mini project for the database course COMP 232 for 4th semester!
 Checkout at: https://eyatra.streamlit.app/
+Checkout video demo at: https://youtu.be/byWhm-3wYsY
 
 ```
 git clone https://github.com/maheshpanta333/Ride-sharing-app.git
