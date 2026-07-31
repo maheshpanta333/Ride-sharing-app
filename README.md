@@ -3,7 +3,7 @@
 Mini project for the database course **COMP 232** (4th semester).
 
 🔗 Live app: [eyatra.streamlit.app](https://eyatra.streamlit.app/)
-🎥 Video demo: [youtu.be/byWhm-3wYsY](https://youtu.be/byWhm-3wYsY)
+🎥 Video demo: [youtu.be/byWhm-3wYsY](https://youtu.be/byWhm-3wYsY)<br>
 
 ## Submitted By
 
@@ -36,9 +36,17 @@ streamlit run app.py
 
 ## Demo Video
 
-<video src="Images%20and%20Videos/RideSharingApp.mov" controls width="600">
+<!--
+To make this play inline on GitHub:
+1. Edit this file on github.com (pencil icon)
+2. Drag RideSharingApp.mp4 into the edit box — GitHub uploads it and gives you a
+   user-images.githubusercontent.com (or user-attachments) URL
+3. Replace REPLACE_WITH_UPLOADED_MP4_URL below with that URL, then commit
+-->
+
+<video src="REPLACE_WITH_UPLOADED_MP4_URL" controls width="600">
   Your browser does not support embedded video. Watch the demo instead on
   <a href="https://youtu.be/byWhm-3wYsY">YouTube</a>.
 </video>
 
-> Note: GitHub's README renderer doesn't reliably play `.mov` files inline — if it doesn't show up, use the YouTube link above.
+Or watch it directly: [![Watch the demo](https://img.youtube.com/vi/byWhm-3wYsY/maxresdefault.jpg)](https://youtu.be/byWhm-3wYsY)
