@@ -4,6 +4,7 @@ Mini project for the database course **COMP 232** (4th semester).
 
 🔗 Live app: [eyatra.streamlit.app](https://eyatra.streamlit.app/)
 🎥 Video demo: [youtu.be/byWhm-3wYsY](https://youtu.be/byWhm-3wYsY)<br>
+Report of the whole project at: [Click here to open report.](./Ride%20Sharing%20App%20Report.pdf)
 
 ## Submitted By
 
@@ -36,8 +37,7 @@ streamlit run app.py
 
 ## Demo Video
 
- Watch the demo  on Youtube click on the image below to watch!
-  <a href="https://youtu.be/byWhm-3wYsY">YouTube</a>.
-
+Watch the demo on Youtube click on the image below to watch!
+<a href="https://youtu.be/byWhm-3wYsY">YouTube</a>.
 
 Or Click on the image below: [![Watch the demo](https://img.youtube.com/vi/byWhm-3wYsY/maxresdefault.jpg)](https://youtu.be/byWhm-3wYsY)
