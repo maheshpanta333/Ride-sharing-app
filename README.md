@@ -36,7 +36,7 @@ streamlit run app.py
 
 ## Demo Video
 
- Watch the demo instead on Youtube click on the image below to watch!
+ Watch the demo  on Youtube click on the image below to watch!
   <a href="https://youtu.be/byWhm-3wYsY">YouTube</a>.
 
 
