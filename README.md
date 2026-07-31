@@ -39,9 +39,11 @@ streamlit run app.py
 <!--
 To make this play inline on GitHub:
 1. Edit this file on github.com (pencil icon)
-2. Drag RideSharingApp.mp4 into the edit box — GitHub uploads it and gives you a
+2. Drag RideSharingApp_clean.mp4 into the edit box — GitHub uploads it and gives you a
    user-images.githubusercontent.com (or user-attachments) URL
 3. Replace REPLACE_WITH_UPLOADED_MP4_URL below with that URL, then commit
+   (file is ~17MB — too big for the web editor's 10MB limit, so drag it into an
+   issue/PR comment instead, copy the generated URL from there, and paste it below)
 -->
 
 <video src="REPLACE_WITH_UPLOADED_MP4_URL" controls width="600">
