@@ -38,6 +38,6 @@ streamlit run app.py
 
  Watch the demo instead on Youtube click on the image below to watch!
   <a href="https://youtu.be/byWhm-3wYsY">YouTube</a>.
-</video>
 
-Or watch it directly: [![Watch the demo](https://img.youtube.com/vi/byWhm-3wYsY/maxresdefault.jpg)](https://youtu.be/byWhm-3wYsY)
+
+Or Click on the image below: [![Watch the demo](https://img.youtube.com/vi/byWhm-3wYsY/maxresdefault.jpg)](https://youtu.be/byWhm-3wYsY)
